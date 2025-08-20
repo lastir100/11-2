@@ -25,6 +25,36 @@ ALTER USER 'sys_test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'pass
 
 *Результатом работы должны быть скриншоты обозначенных заданий, а также простыня со всеми запросами.*
 
+### Решение 1
+![](./img/task1-1.jpg)
+
+![](./img/task1-2.jpg)
+
+![](./img/task1-3.jpg)
+
+```sh
+docker run -d --name mysql8 -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:8.0
+docker exec -it mysql8 mysql -uroot -proot
+```
+
+```sql
+CREATE USER 'sys_temp'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+SELECT User, Host FROM mysql.user;
+GRANT ALL PRIVILEGES ON *.* TO 'sys_temp'@'localhost';
+SHOW GRANTS FOR 'sys_temp'@'localhost';
+```
+```sh
+docker cp sakila-schema.sql mysql8:/sakila-schema.sql
+docker cp sakila-data.sql mysql8:/sakila-data.sql
+docker exec -it mysql8 mysql -usys_temp -ppassword
+```
+```sql
+source sakila-schema.sql
+source sakila-data.sql
+SHOW DATABASES;
+use sakila;
+SHOW TABLES;
+```
 
 ### Задание 2
 Составьте таблицу, используя любой текстовый редактор или Excel, в которой должно быть два столбца: в первом должны быть названия таблиц восстановленной базы, во втором названия первичных ключей этих таблиц. Пример: (скриншот/текст)
@@ -32,7 +62,31 @@ ALTER USER 'sys_test'@'localhost' IDENTIFIED WITH mysql_native_password BY 'pass
 Название таблицы | Название первичного ключа
 customer         | customer_id
 ```
-
+### Решение 2
+```
++-----------------+--------------------------+
+|Название таблицы | Название первичного ключа|
++-----------------+--------------------------+
+| actor           | actor_id                 |
+| address         | address_id               |
+| category        | category_id              |
+| city            | city_id                  |
+| country         | country_id               |
+| customer        | customer_id              |
+| film            | film_id                  |
+| film_actor      | actor_id                 |
+| film_actor      | film_id                  |
+| film_category   | category_id              |
+| film_category   | film_id                  |
+| film_text       | film_id                  |
+| inventory       | inventory_id             |
+| language        | language_id              |
+| payment         | payment_id               |
+| rental          | rental_id                |
+| staff           | staff_id                 |
+| store           | store_id                 |
++-----------------+--------------------------+
+```
 
 ## Дополнительные задания (со звёздочкой*)
 Эти задания дополнительные, то есть не обязательные к выполнению, и никак не повлияют на получение вами зачёта по этому домашнему заданию. Вы можете их выполнить, если хотите глубже шире разобраться в материале.
